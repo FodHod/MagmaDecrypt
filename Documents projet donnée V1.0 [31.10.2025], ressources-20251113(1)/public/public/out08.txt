@@ -1,0 +1,1 @@
+Error: the number of symbols in each line must match the number of columns

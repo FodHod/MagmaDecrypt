@@ -1,0 +1,10 @@
+4
+ABCD
+
+DCB
+
+2 6
+CDBDED
+BABCBA
+
+0

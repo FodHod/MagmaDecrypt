@@ -1,0 +1,36 @@
+// Error messages
+const string BAD_SYMBOL_NB("Error: the symbol set size must be in the range ]2, 64]");
+const string WRONG_SYMBOL_NB("Error: the number of symbols "
+                             "must match the symbol set size");
+                             
+const string WRONG_SYMBOL_VALUE("Error: at least one symbol value is not allowed");
+const string DUPLICATED_SYMBOL_VALUE("Error: all symbols must be different");
+
+const string WRONG_COMPL_SYMBOL_NB("Error: the number of complementary symbols "
+                                   "is incorrect");
+                                   
+const string WRONG_COMPL_SYMBOL_VALUE("Error: complementary symbols "
+                                      "must be part of the symbol set");
+
+const string BAD_GRID_SIZE("Error: the grid size must be in the range [2, 64]");
+const string WRONG_GRID_LINE_SIZE("Error: the number of symbols in each line "
+                                  "must match the number of columns");
+                                  
+const string WRONG_GRID_SYMBOL_VALUE("Error: all grid symbols "
+                                     "must be part of the symbol set");
+
+const string BAD_KEY_VALUE("Error: the key value is invalid");
+
+// Final message
+const string THE_END("The end");
+
+
+// prototype de la fonction d'affichage de message d'error
+void print_error(string message);
+
+void print_error(string message)
+{
+    cout << message;
+    cout << endl;
+    exit(0);
+}
