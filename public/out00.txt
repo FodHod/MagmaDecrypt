@@ -1,0 +1,12 @@
+  ABCD
+A ABCD
+B BBDC
+C CDCB
+D DCBD
+
+CDBDAD
+BABCBA
+
+BBC
+
+The end

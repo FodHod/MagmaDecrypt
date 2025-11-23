@@ -1,0 +1,1 @@
+Error: the symbol set size must be in the range ]2, 64]
