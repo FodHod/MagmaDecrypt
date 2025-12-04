@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch magma_decrypt (Cygwin)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/magma_decrypt.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "externalConsole": false,
+            "preLaunchTask": "build (cygwin g++)",
+            "miDebuggerPath": "E:/cygwin64/bin/gdb.exe",
+            "MIMode": "gdb",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "(MSVC) Launch magma_decrypt",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\magma_decrypt.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "build (cl)"
+        }
+    ]
+}

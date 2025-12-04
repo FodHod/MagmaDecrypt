@@ -1,0 +1,39 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build (cygwin g++)",
+            "type": "shell",
+            "command": "E:\\cygwin64\\bin\\g++.exe",
+            "args": [
+                "-std=c++17",
+                "-g",
+                "-O0",
+                "-Wall",
+                "-Wextra",
+                "-o",
+                "${workspaceFolder}\\magma_decrypt.exe",
+                "${workspaceFolder}\\magma_decrypt_conforme.cc"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "build (cl)",
+            "type": "shell",
+            "command": "cl",
+            "args": [
+                "/EHsc",
+                "/std:c++17",
+                "/Fe:${workspaceFolder}\\magma_decrypt.exe",
+                "${workspaceFolder}\\magma_decrypt_conforme.cc"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "group": "build",
+            "problemMatcher": ["$msCompile"]
+        }
+    ]
+}

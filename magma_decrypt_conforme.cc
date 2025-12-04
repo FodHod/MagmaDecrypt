@@ -14,6 +14,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <functional>
 
 using std::cin;
 using std::cout;
