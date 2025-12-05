@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
+#include <functional>
 using namespace std;
 
 // Error messages
@@ -35,7 +37,10 @@ void print_error(string message)
     exit(0);
 }
 
+//
 // Début de mon code (je vais écrire mes commentaires en anglais)
+//
+
 struct InputData {
     int nbS;
     vector<char> symboles;
@@ -43,6 +48,7 @@ struct InputData {
     vector<char> tsd;
     int nbL, nbC;
     vector<vector<char>> grid;
+    int keyValue;
 };
 
 InputData read_input() {
@@ -75,18 +81,71 @@ InputData read_input() {
         }
     }
 
+    // Get Key Value
+    cin >> data.keyValue;
     return data;
 }
 
 // Validation of parameters according to the error messages
 int parameters_validation(const InputData &data) {
+    // Validate nbS and symboles
+    if (data.nbS <= 2 || data.nbS > 64) {
+        print_error(BAD_SYMBOL_NB);
+    }
+
+    if (data.symboles.size() != static_cast<size_t>(data.nbS)) {
+        print_error(WRONG_SYMBOL_NB);
+    }
+
+    for (char symbole: data.symboles) {
+        if (symbole > 32 || symbole < 126) {
+            print_error(WRONG_SYMBOL_VALUE);
+        }
+    }
+
+    if (count(data.symboles.begin(), data.symboles.end(), data.symboles[0]) > 1) {
+        print_error(DUPLICATED_SYMBOL_VALUE);
+    }
+
+    // Check complementary symbols
+    if (data.tsd.size() != static_cast<size_t>(data.nbTSymboles)) {
+        print_error(WRONG_COMPL_SYMBOL_NB);
+    }
+
+    for (char symbole: data.tsd) {
+        if (find(data.symboles.begin(), data.symboles.end(), symbole) == data.symboles.end()) {
+            print_error(WRONG_COMPL_SYMBOL_VALUE);
+        }
+    }
+
+    // Last but not least, validate grid
+    if (data.nbL < 2 || data.nbL > 64 || data.nbC < 2 || data.nbC > 64) {
+        print_error(BAD_GRID_SIZE);
+    }
+
+    for (const auto &line : data.grid) {
+        if (line.size() != static_cast<size_t>(data.nbC)) {
+            print_error(WRONG_GRID_LINE_SIZE);
+        }
+        for (char symbole : line) {
+            if (find(data.symboles.begin(), data.symboles.end(), symbole) == data.symboles.end()) {
+                print_error(WRONG_GRID_SYMBOL_VALUE);
+            }
+        }
+    }
+
+    // Validate key value - idk how to do that tho :(
     
     return 0;
 }
 
 int main() {
+    // Get Values - Tache 1 & 2 ig
     InputData data = read_input();
     parameters_validation(data);
 
+    // Decryption
+
+    print_error(THE_END);
     return 0;
 }
