@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <functional>
+#include <bitset>
 using namespace std;
 
 // Error messages
@@ -123,6 +124,10 @@ int parameters_validation(const InputData &data) {
         print_error(BAD_GRID_SIZE);
     }
 
+    else if (data.nbL % 2 == 0 || data.nbC % 2 == 0){
+        print_error(BAD_GRID_SIZE);
+    }
+    
     for (const auto &line : data.grid) {
         if (line.size() != static_cast<size_t>(data.nbC)) {
             print_error(WRONG_GRID_LINE_SIZE);
@@ -134,7 +139,78 @@ int parameters_validation(const InputData &data) {
         }
     }
 
-    // Validate key value - idk how to do that tho :(
+    // Validate key value
+    if (data.keyValue != 0) {
+    bitset<8> binary(data.keyValue);
+    string binaryStr = binary.to_string();
+    vector<string> binary2Bit;
+    
+    for (int i = 0; i < 8; i += 2) {
+        binary2Bit.push_back(binaryStr.substr(i, 2));
+    }
+
+    // Check first 2 bit
+    if (binary2Bit[0] != "01") {
+        print_error(BAD_KEY_VALUE);
+    }
+    binary2Bit.erase(binary2Bit.begin());
+
+    // Check for duplicates in resting 3 bits
+    for (size_t i = 0; i < binary2Bit.size(); ++i) {
+            for (size_t j = i + 1; j < binary2Bit.size(); ++j) {
+                if (binary2Bit[i] == binary2Bit[j]) {
+                    print_error(BAD_KEY_VALUE);
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+int print_solution_table(const InputData &data) {
+    // Print header
+    cout << "  ";
+    for (char symbole : data.symboles) {
+        cout << symbole << " ";
+    }
+    cout << endl;
+
+    // Print first ligne
+    cout << data.symboles[0] << " ";
+    for (size_t i = 0; i < data.symboles.size(); ++i) {
+        cout << data.symboles[i] << " ";
+    }
+    cout << endl;
+
+    // Print each ligne
+    int i1 = 0;
+    int i2 = 0;
+    for (size_t i = 1; i < data.symboles.size(); ++i) {
+        cout << data.symboles[i] << " " << data.symboles[i] << " ";
+        for (size_t j = 0; j < data.symboles.size()-1; ++j) {
+            if (i-1 == j) {
+                cout << data.symboles[i] << " ";
+            } else if (i > j) {
+                cout << data.tsd[i1++] << " ";
+            } else {
+                cout << data.tsd[i2++] << " ";
+            }
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
+
+int decrypt(const InputData &data) {
+    // Defining relevant variables for decryption - Notable: Key Value and Order
+    int order[] = {0, 1, 2, 3};
+    if (data.keyValue != 0) {
+        // Reorder according to key value
+    }
+
+
     
     return 0;
 }
@@ -144,8 +220,10 @@ int main() {
     InputData data = read_input();
     parameters_validation(data);
 
-    // Decryption
+    // Decryption - tache 3
+    decrypt(data);
 
     print_error(THE_END);
+
     return 0;
 }
