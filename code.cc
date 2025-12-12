@@ -42,6 +42,7 @@ void print_error(string message)
 // Début de mon code (je vais écrire mes commentaires en anglais)
 //
 
+// For simplicity I created a struct to hold all data - on of the advanteges of c++
 struct InputData {
     int nbS;
     vector<char> symboles;
@@ -156,6 +157,7 @@ int parameters_validation(const InputData &data) {
     binary2Bit.erase(binary2Bit.begin());
 
     // Check for duplicates in resting 3 bits
+    // as the combinations of a, b, c and d are 00, 01, 10, 11 we just need to check for duplicates
     for (size_t i = 0; i < binary2Bit.size(); ++i) {
             for (size_t j = i + 1; j < binary2Bit.size(); ++j) {
                 if (binary2Bit[i] == binary2Bit[j]) {
@@ -203,15 +205,40 @@ int print_solution_table(const InputData &data) {
     return 0;
 }
 
+int print_grid(const InputData &data) {
+    for (const auto &line : data.grid) {
+        for (char symbole : line ) {
+            cout << symbole << " ";
+        }
+        cout << endl;
+    }
+    return 0;
+}
+
 int decrypt(const InputData &data) {
+    // Print solution table
+    print_solution_table(data);
+
     // Defining relevant variables for decryption - Notable: Key Value and Order
     int order[] = {0, 1, 2, 3};
     if (data.keyValue != 0) {
         // Reorder according to key value
+        bitset<8> binary(data.keyValue);
+        string binaryStr = binary.to_string();
+        vector<string> binary2Bit;
+        for (int i = 0; i < 8; i += 2) {
+            binary2Bit.push_back(binaryStr.substr(i, 2));
+        }
+        binary2Bit.erase(binary2Bit.begin());
+
+        
     }
 
-
-    
+    // for the decryption I just repeat the process until nbL = 1
+    while (data.nbL > 1) {
+        // Print current grid
+        print_grid(data);
+    }
     return 0;
 }
 
@@ -224,6 +251,5 @@ int main() {
     decrypt(data);
 
     print_error(THE_END);
-
     return 0;
 }
