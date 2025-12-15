@@ -215,6 +215,36 @@ int print_grid(const InputData &data) {
     return 0;
 }
 
+// Simple Function to get the index of a symbol in the solution table
+static int find_symbol_index(const vector<char> &symbols, char s) {
+    auto it = find(symbols.begin(), symbols.end(), s);
+    if (it == symbols.end()) return -1;
+    return static_cast<int>(it - symbols.begin());
+}
+
+// Get the "sum" of two symboles according to the solution table
+int get_symbol(const InputData &data, char sym1, char sym2) {
+    int i = find_symbol_index(data.symboles, sym1);
+    int j = find_symbol_index(data.symboles, sym2);
+    if (i < 0 || j < 0) print_error(WRONG_GRID_SYMBOL_VALUE);
+
+    // same symbol -> diagonal
+    if (i == j) return data.symboles[i];
+
+    // first row/column behaviour
+    if (i == 0) return data.symboles[j];
+    if (j == 0) return data.symboles[i];
+
+    // ensure i < j so we can index tsd without mirrioring it cuz of symmetry
+    if (i > j) swap(i, j);
+
+    size_t n = data.symboles.size();
+    // get index from tsd for (i, j)
+    size_t idx = static_cast<size_t>((i - 1) * (n - 1) - ((i - 1) * i) / 2 + (j - i - 1));
+
+    return data.tsd[idx];
+}
+
 int decrypt(const InputData &data) {
     // Print solution table
     print_solution_table(data);
@@ -231,13 +261,55 @@ int decrypt(const InputData &data) {
         }
         binary2Bit.erase(binary2Bit.begin());
 
-        
+        int inputOrder[4];
+        int missing;
+        for (size_t i = 0; i < binary2Bit.size(); ++i) {
+            inputOrder[i] = stoi(binary2Bit[i], nullptr, 2);
+            missing += inputOrder[i];
+        }
+
+        inputOrder[4] = 6 - missing; // as 0+1+2+3 = 6 -> 6 - sum of the others = missing one
+        swap(order, inputOrder);
     }
+
+    // Create new grid
+    vector<vector<char>> newGrid(data.nbL / 2, vector<char>(data.nbC / 2));
 
     // for the decryption I just repeat the process until nbL = 1
     while (data.nbL > 1) {
         // Print current grid
         print_grid(data);
+
+        // Reset new grid
+        newGrid.clear();
+        newGrid.assign(data.nbL / 2, vector<char>(data.nbC / 2));
+
+        for (size_t x = 0; x < data.nbC; x += 2) {
+            for (size_t y = 0; y < data.nbL; y += 2) {
+                // Get current block
+                char a = data.grid[y][x];
+                char b = data.grid[y][x + 1];
+                char c = data.grid[y + 1][x];
+                char d = data.grid[y + 1][x + 1];
+                char block[4] = {a, b, c, d};
+
+                char sum;
+
+                // Apply compositions according to order
+                sum = get_symbol(data, block[order[0]], block[order[1]]);
+                sum = get_symbol(data, sum, block[order[2]]);
+                sum = get_symbol(data, sum, block[order[3]]);
+
+                // Place result in new grid
+                newGrid[y][x] = sum;
+            }
+        
+        // Reset main grid and inputing new grid
+        //data.grid.clear();
+        //data.nbL /= 2;
+        //data.nbC /= 2;
+        copy(newGrid.begin(), newGrid.end(), data.grid.begin());
+        }
     }
     return 0;
 }
