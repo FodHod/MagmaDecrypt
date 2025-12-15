@@ -53,6 +53,7 @@ struct InputData {
     int keyValue;
 };
 
+// Get Input Data according to the given format
 InputData read_input() {
     InputData data;
     
@@ -170,6 +171,7 @@ int parameters_validation(const InputData &data) {
     return 0;
 }
 
+// Print the established solution table with given symboles
 int print_solution_table(const InputData &data) {
     // Print header
     cout << "  ";
@@ -205,6 +207,7 @@ int print_solution_table(const InputData &data) {
     return 0;
 }
 
+// Print current grid
 int print_grid(const InputData &data) {
     for (const auto &line : data.grid) {
         for (char symbole : line ) {
@@ -222,7 +225,7 @@ static int find_symbol_index(const vector<char> &symbols, char s) {
     return static_cast<int>(it - symbols.begin());
 }
 
-// Get the "sum" of two symboles according to the solution table
+// Get the "sum" of two symboles according to the solution table using find_symbol_index()
 int get_symbol(const InputData &data, char sym1, char sym2) {
     int i = find_symbol_index(data.symboles, sym1);
     int j = find_symbol_index(data.symboles, sym2);
@@ -245,7 +248,8 @@ int get_symbol(const InputData &data, char sym1, char sym2) {
     return data.tsd[idx];
 }
 
-int decrypt(const InputData &data) {
+// Decryption algorithm using get_symbol() - (using find_symbol_index()), print_grid() and print_solution_table()
+int decrypt(InputData data) {
     // Print solution table
     print_solution_table(data);
 
@@ -261,19 +265,19 @@ int decrypt(const InputData &data) {
         }
         binary2Bit.erase(binary2Bit.begin());
 
-        int inputOrder[4];
-        int missing;
+        int inputOrder[3];
+        int sum = 0;
         for (size_t i = 0; i < binary2Bit.size(); ++i) {
             inputOrder[i] = stoi(binary2Bit[i], nullptr, 2);
-            missing += inputOrder[i];
+            sum += inputOrder[i];
         }
 
-        inputOrder[4] = 6 - missing; // as 0+1+2+3 = 6 -> 6 - sum of the others = missing one
-        swap(order, inputOrder);
+        int missing = 6 - sum; // as 0+1+2+3 = 6 -> 6 - sum of the others = missing one
+        order[0] = inputOrder[0];
+        order[1] = inputOrder[1];
+        order[2] = inputOrder[2];
+        order[3] = missing;
     }
-
-    // Create new grid
-    vector<vector<char>> newGrid(data.nbL / 2, vector<char>(data.nbC / 2));
 
     // for the decryption I just repeat the process until nbL = 1
     while (data.nbL > 1) {
@@ -281,12 +285,11 @@ int decrypt(const InputData &data) {
         print_grid(data);
 
         // Reset new grid
-        newGrid.clear();
-        newGrid.assign(data.nbL / 2, vector<char>(data.nbC / 2));
+        vector<vector<char>> newGrid(data.nbL / 2, vector<char>(data.nbC / 2));
 
-        for (size_t x = 0; x < data.nbC; x += 2) {
-            for (size_t y = 0; y < data.nbL; y += 2) {
-                // Get current block
+        for (size_t y = 0; y < data.nbL; y += 2) {
+            for (size_t x = 0; x < data.nbC; x += 2) {
+                // Get current 2x2 block
                 char a = data.grid[y][x];
                 char b = data.grid[y][x + 1];
                 char c = data.grid[y + 1][x];
@@ -301,15 +304,13 @@ int decrypt(const InputData &data) {
                 sum = get_symbol(data, sum, block[order[3]]);
 
                 // Place result in new grid
-                newGrid[y][x] = sum;
+                newGrid[y / 2][x / 2] = sum;
             }
-        
-        // Reset main grid and inputing new grid
-        //data.grid.clear();
-        //data.nbL /= 2;
-        //data.nbC /= 2;
-        copy(newGrid.begin(), newGrid.end(), data.grid.begin());
         }
+
+        data.grid = move(newGrid);
+        data.nbL /= 2;
+        data.nbC /= 2;
     }
     return 0;
 }
